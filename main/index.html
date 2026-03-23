@@ -1,1 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Gnoke Reader</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+
+  <link rel="icon"             type="image/png" href="../global.png" />
+  <link rel="apple-touch-icon" href="../global.png" />
+  <link rel="manifest"         href="../manifest.json" />
+
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../reader.css" />
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../sw.js');
+    }
+  </script>
+</head>
+<body>
+
+
+<!-- ════════════════════════════════════════
+     TOPBAR
+     ════════════════════════════════════════ -->
+<div id="topbar">
+
+  <button id="hamburger" title="Menu">&#9776;</button>
+
+  <a id="brand" href="../" title="Gnoke Reader home">
+    <span id="brand-gnoke">Gnoke</span>
+    <span id="brand-app">Reader</span>
+  </a>
+
+  <span id="context-info"></span>
+  <div class="topbar-spacer"></div>
+
+  <div class="menu-group" id="menu-group">
+    <div class="menu">
+      <button class="menu-btn">Open</button>
+      <div class="menu-content">
+        <button id="btn-open-file">📂 Open File…</button>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-btn">View</button>
+      <div class="menu-content">
+        <button onclick="loadPage('home-page')">🏠 Home</button>
+        <button onclick="loadPage('about-page')">ℹ️ About</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="topbar-right">
+    <span id="status-chip"></span>
+    <button class="icon-btn" id="theme-toggle" title="Toggle theme">🌙</button>
+  </div>
+
+</div>
+
+
+<!-- ════════════════════════════════════════
+     PAGES
+     ════════════════════════════════════════ -->
+<main class="pages">
+
+
+  <!-- ── HOME PAGE ── -->
+  <section id="home-page" class="page active">
+    <div class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Open a File</h1>
+          <p class="sub">Drag, drop, or pick a file to start reading</p>
+        </div>
+      </div>
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="drop-zone" style="margin-bottom:28px;">
+        <input type="file" id="file-input"
+               accept=".md,.markdown,.txt,.me,.log,.json,.geojson,.jsonl,.csv,.tsv,.pdf,.docx,.ini,.cfg,.conf,.toml,.env,.diff,.patch,.sql" />
+        <span class="drop-icon">📂</span>
+        <div class="drop-title">Drop a file here</div>
+        <div class="drop-sub">
+          or click to browse — all processing happens locally,<br>nothing is uploaded anywhere.
+        </div>
+        <div class="drop-formats" id="format-tags"></div>
+      </div>
+
+      <!-- Recent files -->
+      <div class="form-card">
+        <h2 class="card-title">🕐 Recent Files</h2>
+        <div id="recent-list"></div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── READER PAGE ── -->
+  <section id="reader-page" class="page">
+
+    <!-- Toolbar -->
+    <div class="reader-toolbar">
+      <div class="reader-toolbar-left">
+        <span class="reader-format-badge" id="reader-format-badge">—</span>
+        <span class="reader-filename"     id="reader-filename">—</span>
+      </div>
+      <div class="reader-toolbar-right">
+        <!-- Search -->
+        <div class="reader-search-wrap">
+          <span style="color:var(--muted);font-size:.82rem;">🔍</span>
+          <input type="search" id="search-input" placeholder="Find in file…" autocomplete="off" />
+          <button class="font-btn" id="btn-search-prev" title="Previous match" style="width:20px;height:20px;font-size:.65rem;">↑</button>
+          <button class="font-btn" id="btn-search-next" title="Next match" style="width:20px;height:20px;font-size:.65rem;">↓</button>
+          <span class="reader-search-count" id="search-count"></span>
+        </div>
+        <!-- Font size -->
+        <button class="font-btn" id="btn-font-down" title="Smaller text">A−</button>
+        <button class="font-btn" id="btn-font-up"   title="Larger text">A+</button>
+        <!-- Open another file -->
+        <button class="font-btn" id="btn-open-file-reader" title="Open another file"
+                onclick="document.getElementById('file-input').click()" style="font-size:.75rem;">📂</button>
+        <!-- Close -->
+        <button class="reader-close-btn" id="btn-reader-close" title="Close file">✕</button>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="reader-content">
+      <div id="reader-body" class="reader-body"></div>
+    </div>
+
+  </section>
+
+
+  <!-- ── ABOUT PAGE ── -->
+  <section id="about-page" class="page">
+    <div class="page-content" style="max-width:600px;">
+
+      <div class="page-header">
+        <div>
+          <h1>About Reader</h1>
+          <p class="sub">Gnoke Suite · v1.0</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn btn-ghost btn-sm" onclick="loadPage('home-page')">← Back</button>
+          <button class="btn btn-ghost btn-sm" id="btn-check-update">🔄 Update</button>
+        </div>
+      </div>
+
+      <div class="form-card" style="margin-bottom:16px;">
+        <h2 class="card-title">What It Does</h2>
+        <p class="hint">
+          Gnoke Reader is a <strong>universal offline document viewer</strong>.
+          Open any supported file and read it beautifully — no upload, no account, no server.
+          All processing happens inside your browser using local JavaScript.
+        </p>
+      </div>
+
+      <div class="form-card" style="margin-bottom:16px;">
+        <h2 class="card-title">⚙️ Under The Hood</h2>
+        <table class="about-table">
+          <tbody id="about-tech-table"></tbody>
+        </table>
+      </div>
+
+      <div class="form-card" style="margin-bottom:16px;">
+        <h2 class="card-title">Adding a New Format</h2>
+        <p class="hint" style="margin-bottom:12px;">
+          Every format is a self-contained plugin in <code>js/readers/</code>.
+          To add a new format:
+        </p>
+        <ol style="padding-left:1.4em;line-height:2;font-size:.84rem;color:var(--text2);">
+          <li>Create <code>js/readers/yourformat.js</code></li>
+          <li>Call <code>ReaderRegistry.register({ extensions, label, icon, lib, render })</code></li>
+          <li>Add one <code>&lt;script&gt;</code> tag in <code>main/index.html</code></li>
+          <li>Done — zero other files change</li>
+        </ol>
+      </div>
+
+      <div class="form-card">
+        <h2 class="card-title">Privacy</h2>
+        <p class="hint">
+          No tracking. No telemetry. No ads. Files never leave your device.
+          Recent file metadata (name and date only — never content) is stored in
+          <code>localStorage</code> on your device.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+
+</main><!-- /pages -->
+
+
+<!-- ════════════════════════════════════════
+     MOBILE DRAWER
+     ════════════════════════════════════════ -->
+<div id="drawer-overlay"></div>
+<nav id="drawer">
+  <div id="drawer-header">
+    <div id="drawer-brand">
+      <span id="drawer-gnoke">Gnoke</span>
+      <span id="drawer-app">Reader</span>
+    </div>
+    <button id="drawer-close">✕</button>
+  </div>
+
+  <div class="drawer-section">File</div>
+  <button class="drawer-btn" onclick="document.getElementById('file-input').click(); Drawer.close();">📂 Open File…</button>
+
+  <div class="drawer-section">Navigate</div>
+  <button class="drawer-btn" onclick="loadPage('home-page'); Drawer.close();">🏠 Home</button>
+  <button class="drawer-btn" onclick="loadPage('about-page'); Drawer.close();">ℹ️ About</button>
+</nav>
+
+
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════
+     SCRIPTS — load order matters
+     ════════════════════════════════════════ -->
+<script src="../js/state.js"></script>
+<script src="../js/theme.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/reader-core.js"></script>
+
+<!-- Format plugins — each self-registers via ReaderRegistry.register() -->
+<script src="../js/readers/txt.js"></script>
+<script src="../js/readers/log.js"></script>
+<script src="../js/readers/md.js"></script>
+<script src="../js/readers/json.js"></script>
+<script src="../js/readers/csv.js"></script>
+<script src="../js/readers/pdf.js"></script>
+<script src="../js/readers/docx.js"></script>
+<script src="../js/readers/ini.js"></script>
+<script src="../js/readers/env.js"></script>
+<script src="../js/readers/diff.js"></script>
+<script src="../js/readers/sql.js"></script>
+
+<script src="../js/app.js"></script>
+
+<script>
+/* ── Update — clear cache + unregister SW + hard reload ── */
+async function applyUpdate() {
+  const btn = document.getElementById('btn-check-update');
+  if (!btn) return;
+  btn.disabled    = true;
+  btn.textContent = '⏳ Clearing cache…';
+  try {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => caches.delete(k)));
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg) await reg.unregister();
+    }
+  } catch (e) { console.warn('[update] cache clear failed', e); }
+  btn.textContent = '⏳ Reloading…';
+  location.reload(true);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-check-update')
+    ?.addEventListener('click', applyUpdate);
+});
+</script>
+
+</body>
+</html>
