@@ -3,7 +3,7 @@
  * Offline-first service worker. Bump CACHE_NAME on every deploy.
  */
 
-const CACHE_NAME = 'gnoke-reader-v2';
+const CACHE_NAME = 'gnoke-reader-v2.0.1';
 
 const ASSETS = [
   './',
