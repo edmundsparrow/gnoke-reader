@@ -121,6 +121,7 @@ That's it. `reader-core.js`, `app.js`, and every other file stay untouched.
 - **JSON collapsible tree** — click any object/array node to expand or collapse
 - **Log level colouring** — ERROR red, WARN amber, INFO blue, SUCCESS green, DEBUG grey
 - **PDF keyboard navigation** — arrow keys to turn pages
+- **Export to PDF** — save rendered document as PDF with a single click
 - **Offline** — full PWA, works after first load
 
 ---
