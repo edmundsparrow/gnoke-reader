@@ -14,7 +14,7 @@
   <link rel="manifest"         href="../manifest.json" />
 
   <link rel="stylesheet" href="../style.css" />
-  <link rel="stylesheet" href="../reader.css" />
+  <link rel="stylesheet" href="../readers.css" />
 
   <script>
     if ('serviceWorker' in navigator) {
@@ -121,9 +121,8 @@
           <button class="font-btn" id="btn-search-next" title="Next match" style="width:20px;height:20px;font-size:.65rem;">↓</button>
           <span class="reader-search-count" id="search-count"></span>
         </div>
-        <!-- Font size -->
-        <button class="font-btn" id="btn-font-down" title="Smaller text">A−</button>
-        <button class="font-btn" id="btn-font-up"   title="Larger text">A+</button>
+        <!-- Convert to PDF -->
+        <button class="font-btn" id="btn-convert-pdf" title="Convert to PDF" style="font-size:.72rem;width:auto;padding:0 10px;border-radius:6px;">⬇ PDF</button>
         <!-- Open another file -->
         <button class="font-btn" id="btn-open-file-reader" title="Open another file"
                 onclick="document.getElementById('file-input').click()" style="font-size:.75rem;">📂</button>
@@ -147,7 +146,7 @@
       <div class="page-header">
         <div>
           <h1>About Reader</h1>
-          <p class="sub">Gnoke Suite · v1.0</p>
+          <p class="sub">Gnoke Suite · v1.1.0</p>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
           <button class="btn btn-ghost btn-sm" onclick="loadPage('home-page')">← Back</button>
@@ -246,6 +245,7 @@
 <script src="../js/readers/diff.js"></script>
 <script src="../js/readers/sql.js"></script>
 
+<script src="../js/converter.js"></script>
 <script src="../js/app.js"></script>
 
 <script>
