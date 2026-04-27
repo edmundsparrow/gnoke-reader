@@ -45,13 +45,13 @@ const ReaderRegistry = (() => {
 const ReaderCore = (() => {
 
   const RECENT_KEY     = 'gnoke_reader_recent';
-  const FONT_KEY       = 'gnoke_reader_fontsize';
+
   const MAX_RECENT     = 8;
 
   let _currentSearch   = '';
   let _searchHits      = [];
   let _searchIdx       = 0;
-  let _fontSize        = 16;
+
 
   /* ── DOM shortcuts ── */
   const $  = id => document.getElementById(id);
@@ -116,15 +116,6 @@ const ReaderCore = (() => {
     wrap.innerHTML = ReaderRegistry.allFormats()
       .map(p => `<span class="format-tag">${p.icon} ${p.label}</span>`)
       .join('');
-  }
-
-  /* ── Font size ── */
-  function _applyFontSize(size) {
-    _fontSize = Math.max(12, Math.min(24, size));
-    const body = $('reader-body');
-    if (body) body.style.fontSize = _fontSize + 'px';
-    localStorage.setItem(FONT_KEY, _fontSize);
-    State.set('readerFontSize', _fontSize);
   }
 
   /* ── Search ── */
@@ -268,10 +259,6 @@ const ReaderCore = (() => {
     if (si) si.value = '';
     const sc = $('search-count');
     if (sc) sc.textContent = '';
-
-    /* Apply saved font size */
-    const body = $('reader-body');
-    if (body) body.style.fontSize = _fontSize + 'px';
   }
 
   function closeReader() {
@@ -301,13 +288,8 @@ const ReaderCore = (() => {
 
   /* ── Init ── */
   function init() {
-    _fontSize = parseInt(localStorage.getItem(FONT_KEY)) || 16;
     _renderFormatTags();
     _renderRecent();
-
-    /* Font size controls */
-    $('btn-font-up')?.addEventListener('click', () => _applyFontSize(_fontSize + 1));
-    $('btn-font-down')?.addEventListener('click', () => _applyFontSize(_fontSize - 1));
 
     /* Search */
     $('search-input')?.addEventListener('input', e => {
@@ -349,3 +331,4 @@ const ReaderCore = (() => {
 
   return { init, openFile, closeReader, runSearch, searchNext, searchPrev };
 })();
+

@@ -10,8 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   UI.init();
 
-  /* ── 2. Init reader core (registry + drop zone + events) ── */
+  /* ── Init reader core ── */
   ReaderCore.init();
+
+  /* ── Convert to PDF ── */
+  document.getElementById('btn-convert-pdf')
+    ?.addEventListener('click', () => Converter.exportPDF());
 
   /* ── 3. Initial page ── */
   _loadPage('home-page');
